@@ -3,6 +3,8 @@ package main
 import (
 	"negai/database"
 	"negai/handlers"
+	"negai/routes"
+	"os"
 
 	"flag"
 	"log"
@@ -22,7 +24,7 @@ func main() {
 	flag.Parse()
 
 	// Connected with database
-	database.Connect()
+	database.Connect(os.Getenv("DATABASE_CONNECTION"))
 	database.AutoMigrateModels()
 
 	// Create fiber app
@@ -37,9 +39,8 @@ func main() {
 	// Create a /api/v1 endpoint
 	v1 := app.Group("/api/v1")
 
-	// Bind handlers
-	v1.Get("/users", handlers.UserList)
-	v1.Post("/users", handlers.UserCreate)
+	// Bind routes
+	routes.BindUser(v1.Group("/user"))
 
 	// Handle not founds
 	app.Use(handlers.NotFound)
