@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"wishlist/database"
-	"wishlist/models"
+	"negai/database"
+	"negai/models"
 
 	"github.com/gofiber/fiber/v2"
 )

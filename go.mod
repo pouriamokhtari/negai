@@ -1,4 +1,4 @@
-module wishlist
+module negai
 
 go 1.15
 

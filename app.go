@@ -1,8 +1,8 @@
 package main
 
 import (
-	"wishlist/database"
-	"wishlist/handlers"
+	"negai/database"
+	"negai/handlers"
 
 	"flag"
 	"log"

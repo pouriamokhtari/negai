@@ -2,8 +2,8 @@ package database
 
 import (
 	"fmt"
+	"negai/models"
 	"sync"
-	"wishlist/models"
 )
 
 var (
