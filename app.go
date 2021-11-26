@@ -23,6 +23,7 @@ func main() {
 
 	// Connected with database
 	database.Connect()
+	database.AutoMigrateModels()
 
 	// Create fiber app
 	app := fiber.New(fiber.Config{

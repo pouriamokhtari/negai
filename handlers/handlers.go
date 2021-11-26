@@ -9,7 +9,8 @@ import (
 
 // UserGet returns a user
 func UserList(c *fiber.Ctx) error {
-	users := database.Get()
+	var users []models.User
+	database.Connection.Find(&users)
 	return c.JSON(fiber.Map{
 		"success": true,
 		"user":    users,
@@ -21,7 +22,7 @@ func UserCreate(c *fiber.Ctx) error {
 	user := &models.User{
 		Name: c.FormValue("user"),
 	}
-	database.Insert(user)
+	database.Connection.Create(&user)
 	return c.JSON(fiber.Map{
 		"success": true,
 		"user":    user,

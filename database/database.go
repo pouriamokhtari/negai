@@ -1,28 +1,25 @@
 package database
 
 import (
-	"fmt"
 	"negai/models"
-	"sync"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var (
-	db []*models.User
-	mu sync.Mutex
+	Connection *gorm.DB
 )
 
-// Connect with database
 func Connect() {
-	db = make([]*models.User, 0)
-	fmt.Println("Connected with Database")
+	var err error
+
+	Connection, err = gorm.Open(postgres.Open("host=localhost user=postgres password= dbname=negai port=5432 sslmode=disable"))
+	if err != nil {
+		panic("Couldn't connect to the database")
+	}
 }
 
-func Insert(user *models.User) {
-	mu.Lock()
-	db = append(db, user)
-	mu.Unlock()
-}
-
-func Get() []*models.User {
-	return db
+func AutoMigrateModels() {
+	Connection.AutoMigrate(&models.User{})
 }
