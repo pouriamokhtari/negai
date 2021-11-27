@@ -2,10 +2,21 @@ package handlers
 
 import (
 	"negai/database"
+	"negai/helpers"
 	"negai/models"
 
 	"github.com/gofiber/fiber/v2"
 )
+
+type NewUserParams struct {
+	Email    string `validate:"required,email"`
+	Password string `validate:"required,min=8"`
+}
+
+type UpdateUserParams struct {
+	Email    string `validate:"email"`
+	Password string `validate:"min=8"`
+}
 
 func GetUser(c *fiber.Ctx) error {
 	var user models.User
@@ -24,10 +35,24 @@ func GetAllUsers(c *fiber.Ctx) error {
 }
 
 func CreateUser(c *fiber.Ctx) error {
-	user := &models.User{}
+	params := &NewUserParams{}
 
-	if err := c.BodyParser(user); err != nil {
+	if err := c.BodyParser(params); err != nil {
 		return BadRequest(c)
+	}
+
+	if err := helpers.ValidateStruct(params); err != nil {
+		return ValidationError(c, err)
+	}
+
+	passwordDigest, err := helpers.HashPassword(params.Password)
+	if err != nil {
+		return InternalServerError(c)
+	}
+
+	user := models.User{
+		Email:          params.Email,
+		PasswordDigest: passwordDigest,
 	}
 
 	database.Connection.Create(user)

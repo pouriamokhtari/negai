@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"negai/helpers"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -34,4 +36,8 @@ func InternalServerError(c *fiber.Ctx) error {
 		JSON(fiber.Map{
 			"Error": "internal server error",
 		})
+}
+
+func ValidationError(c *fiber.Ctx, err []*helpers.ErrorResponse) error {
+	return c.JSON(err)
 }

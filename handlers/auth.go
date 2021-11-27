@@ -12,13 +12,13 @@ import (
 )
 
 type RegisterParams struct {
-	Email    string
-	Password string
+	Email    string `validate:"required,email"`
+	Password string `validate:"required,min=8"`
 }
 
 type LoginParams struct {
-	Email    string
-	Password string
+	Email    string `validate:"required,email"`
+	Password string `validate:"required"`
 }
 
 func Register(c *fiber.Ctx) error {
@@ -26,6 +26,10 @@ func Register(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(params); err != nil {
 		return BadRequest(c)
+	}
+
+	if err := helpers.ValidateStruct(params); err != nil {
+		return ValidationError(c, err)
 	}
 
 	passwordDigest, err := helpers.HashPassword(params.Password)
@@ -51,6 +55,10 @@ func Login(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(params); err != nil {
 		return BadRequest(c)
+	}
+
+	if err := helpers.ValidateStruct(params); err != nil {
+		return ValidationError(c, err)
 	}
 
 	user := &models.User{}
