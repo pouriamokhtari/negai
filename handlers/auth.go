@@ -24,9 +24,7 @@ func Register(c *fiber.Ctx) error {
 	params := &RegisterParams{}
 
 	if err := c.BodyParser(params); err != nil {
-		return c.JSON(fiber.Map{
-			"Error": "validation error",
-		})
+		return BadRequest(c)
 	}
 
 	passwordDigest, err := helpers.HashPassword(params.Password)
@@ -47,24 +45,18 @@ func Login(c *fiber.Ctx) error {
 	params := &LoginParams{}
 
 	if err := c.BodyParser(params); err != nil {
-		return c.JSON(fiber.Map{
-			"Error": "validation error",
-		})
+		return BadRequest(c)
 	}
 
 	user := &models.User{}
 
 	result := database.Connection.Where("email = ?", params.Email).First(&user)
 	if result.Error != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"Error": "Unauthorized",
-		})
+		return Unauthorized(c)
 	}
 
 	if !helpers.CheckPasssword(params.Password, user.PasswordDigest) {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"Error": "Unauthorized",
-		})
+		return Unauthorized(c)
 	}
 
 	claims := jwt.MapClaims{

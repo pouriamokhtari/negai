@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func BindPublic(r fiber.Router) {
+func BindAuth(r fiber.Router) {
 	r.Post("/register", handlers.Register)
 	r.Post("/login", handlers.Login)
 }
