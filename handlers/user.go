@@ -11,9 +11,7 @@ func GetUser(c *fiber.Ctx) error {
 	var user models.User
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return c.JSON(fiber.Map{
-			"Error": "object not found",
-		})
+		return NotFound(c)
 	}
 	database.Connection.First(&user, id)
 	return c.JSON(user)
@@ -29,9 +27,7 @@ func CreateUser(c *fiber.Ctx) error {
 	user := &models.User{}
 
 	if err := c.BodyParser(user); err != nil {
-		return c.JSON(fiber.Map{
-			"Error": "validation error",
-		})
+		return BadRequest(c)
 	}
 
 	database.Connection.Create(user)
@@ -42,15 +38,11 @@ func UpdateUser(c *fiber.Ctx) error {
 	var user models.User
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return c.JSON(fiber.Map{
-			"Error": "object not found",
-		})
+		return NotFound(c)
 	}
 
 	if err := c.BodyParser(user); err != nil {
-		return c.JSON(fiber.Map{
-			"Error": "validation error",
-		})
+		return BadRequest(c)
 	}
 
 	database.Connection.First(&user, id)
@@ -62,9 +54,7 @@ func DeleteUser(c *fiber.Ctx) error {
 	var user models.User
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return c.JSON(fiber.Map{
-			"Error": "object not found",
-		})
+		return NotFound(c)
 	}
 
 	database.Connection.First(&user, id)

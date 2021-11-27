@@ -6,7 +6,15 @@ import (
 
 // NotFound returns custom 404 page
 func NotFound(c *fiber.Ctx) error {
-	return c.JSON(fiber.Map{
-		"Error": "object not found",
-	})
+	return c.Status(fiber.StatusNotFound).
+		JSON(fiber.Map{
+			"Error": "object not found",
+		})
+}
+
+func BadRequest(c *fiber.Ctx) error {
+	return c.Status(fiber.StatusBadRequest).
+		JSON(fiber.Map{
+			"Error": "malformed request",
+		})
 }
