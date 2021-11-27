@@ -18,3 +18,10 @@ func BadRequest(c *fiber.Ctx) error {
 			"Error": "malformed request",
 		})
 }
+
+func Unauthorized(c *fiber.Ctx) error {
+	return c.Status(fiber.StatusUnauthorized).
+		JSON(fiber.Map{
+			"Error": "unauthorized",
+		})
+}

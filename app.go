@@ -41,7 +41,7 @@ func main() {
 
 	// Bind routes
 	routes.BindUser(v1.Group("/user"))
-	routes.BindPublic(v1.Group("/public"))
+	routes.BindAuth(v1.Group("/auth"))
 
 	// Handle not founds
 	app.Use(handlers.NotFound)
