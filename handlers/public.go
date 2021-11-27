@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"negai/database"
+	"negai/helpers"
 	"negai/models"
 	"time"
 
@@ -28,9 +29,14 @@ func Register(c *fiber.Ctx) error {
 		})
 	}
 
+	passwordDigest, err := helpers.HashPassword(params.Password)
+	if err != nil {
+		panic(err)
+	}
+
 	user := &models.User{
 		Email:          params.Email,
-		PasswordDigest: params.Password,
+		PasswordDigest: passwordDigest,
 	}
 	database.Connection.Create(&user)
 
@@ -50,6 +56,12 @@ func Login(c *fiber.Ctx) error {
 
 	result := database.Connection.Where("email = ?", params.Email).First(&user)
 	if result.Error != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"Error": "Unauthorized",
+		})
+	}
+
+	if !helpers.CheckPasssword(params.Password, user.PasswordDigest) {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"Error": "Unauthorized",
 		})
