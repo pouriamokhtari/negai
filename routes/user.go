@@ -2,17 +2,14 @@ package routes
 
 import (
 	"negai/handlers"
-	"os"
+	"negai/helpers"
 
 	"github.com/gofiber/fiber/v2"
-	jwtware "github.com/gofiber/jwt/v3"
 )
 
 func BindUser(r fiber.Router) {
 	// JWT Middleware
-	r.Use(jwtware.New(jwtware.Config{
-		SigningKey: os.Getenv("JWT_SECRET"),
-	}))
+	r.Use(helpers.AuthMiddleware)
 	r.Get("/", handlers.GetAllUsers)
 	r.Get("/:id", handlers.GetUser)
 	r.Post("/", handlers.CreateUser)

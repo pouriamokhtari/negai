@@ -3,6 +3,7 @@ package main
 import (
 	"negai/database"
 	"negai/handlers"
+	"negai/helpers"
 	"negai/routes"
 	"os"
 
@@ -35,6 +36,9 @@ func main() {
 	// Middleware
 	app.Use(recover.New())
 	app.Use(logger.New())
+
+	// Create JWT middleware (used later with route groups)
+	helpers.CreateAuthMiddleware()
 
 	// Create a /api/v1 endpoint
 	v1 := app.Group("/api/v1")
