@@ -4,7 +4,7 @@
 
 
 ```bash
-go run app.go
+go run .
 ```
 
 
