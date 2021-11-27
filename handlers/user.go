@@ -60,17 +60,29 @@ func CreateUser(c *fiber.Ctx) error {
 }
 
 func UpdateUser(c *fiber.Ctx) error {
-	var user models.User
+	params := &UpdateUserParams{}
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return NotFound(c)
 	}
 
-	if err := c.BodyParser(user); err != nil {
+	if err := c.BodyParser(params); err != nil {
 		return BadRequest(c)
 	}
 
+	if err := helpers.ValidateStruct(params); err != nil {
+		return ValidationError(c, err)
+	}
+
+	var user models.User
 	database.Connection.First(&user, id)
+
+	user.Email = params.Email
+	user.PasswordDigest, err = helpers.HashPassword(params.Password)
+	if err != nil {
+		return InternalServerError(c)
+	}
+
 	database.Connection.Updates(user)
 	return c.JSON(user)
 }
