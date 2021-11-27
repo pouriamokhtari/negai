@@ -4,7 +4,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// NotFound returns custom 404 page
+func ErrorHandler(c *fiber.Ctx, err error) error {
+	return InternalServerError(c)
+}
+
 func NotFound(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusNotFound).
 		JSON(fiber.Map{
@@ -23,5 +26,12 @@ func Unauthorized(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusUnauthorized).
 		JSON(fiber.Map{
 			"Error": "unauthorized",
+		})
+}
+
+func InternalServerError(c *fiber.Ctx) error {
+	return c.Status(fiber.StatusInternalServerError).
+		JSON(fiber.Map{
+			"Error": "internal server error",
 		})
 }

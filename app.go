@@ -30,7 +30,8 @@ func main() {
 
 	// Create fiber app
 	app := fiber.New(fiber.Config{
-		Prefork: *prod, // go run app.go -prod
+		Prefork:      *prod, // go run app.go -prod
+		ErrorHandler: handlers.ErrorHandler,
 	})
 
 	// Middleware
