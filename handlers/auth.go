@@ -36,7 +36,11 @@ func Register(c *fiber.Ctx) error {
 		Email:          params.Email,
 		PasswordDigest: passwordDigest,
 	}
-	database.Connection.Create(&user)
+	result := database.Connection.Create(&user)
+
+	if result.Error != nil {
+		return BadRequest(c)
+	}
 
 	return c.JSON(user)
 }
