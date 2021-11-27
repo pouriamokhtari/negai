@@ -11,6 +11,6 @@ var JWTMiddleware func(*fiber.Ctx) error
 
 func CreateJWTMiddleware() {
 	JWTMiddleware = jwt.New(jwt.Config{
-		SigningKey: os.Getenv("JWT_SECRET"),
+		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 	})
 }

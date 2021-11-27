@@ -4,6 +4,7 @@ import (
 	"negai/database"
 	"negai/helpers"
 	"negai/models"
+	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -64,11 +65,11 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	claims := jwt.MapClaims{
-		"Email":   user.Email,
-		"Expires": time.Now().Add(time.Hour * 72).Unix(),
+		"Email": user.Email,
+		"exp":   time.Now().Add(time.Hour * 72).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	encodedToken, err := token.SignedString([]byte("secret"))
+	encodedToken, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 
 	if err != nil {
 		return c.SendStatus(fiber.StatusInternalServerError)
