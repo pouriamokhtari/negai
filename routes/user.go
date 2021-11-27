@@ -9,7 +9,7 @@ import (
 
 func BindUser(r fiber.Router) {
 	// JWT Middleware
-	r.Use(helpers.AuthMiddleware)
+	r.Use(helpers.JWTMiddleware)
 	r.Get("/", handlers.GetAllUsers)
 	r.Get("/:id", handlers.GetUser)
 	r.Post("/", handlers.CreateUser)

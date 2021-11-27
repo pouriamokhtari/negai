@@ -38,7 +38,7 @@ func main() {
 	app.Use(logger.New())
 
 	// Create JWT middleware (used later with route groups)
-	helpers.CreateAuthMiddleware()
+	helpers.CreateJWTMiddleware()
 
 	// Create a /api/v1 endpoint
 	v1 := app.Group("/api/v1")
