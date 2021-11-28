@@ -39,5 +39,9 @@ func InternalServerError(c *fiber.Ctx) error {
 }
 
 func ValidationError(c *fiber.Ctx, err []*helpers.ErrorResponse) error {
-	return c.JSON(err)
+	return c.Status(fiber.StatusBadRequest).
+		JSON(fiber.Map{
+			"error":      "validation error",
+			"validation": err,
+		})
 }
