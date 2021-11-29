@@ -1,37 +1,44 @@
 package handlers
 
 import (
-	"negai/database"
-	"negai/models"
+	"log"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-// UserGet returns a user
-func UserList(c *fiber.Ctx) error {
-	var users []models.User
-	database.Connection.Find(&users)
-	return c.JSON(fiber.Map{
-		"success": true,
-		"user":    users,
-	})
+func InternalServerError(c *fiber.Ctx, err error) error {
+	log.Println(err)
+	return c.Status(fiber.StatusInternalServerError).
+		JSON(fiber.Map{
+			"Error": "internal server error",
+		})
 }
 
-// UserCreate registers a user
-func UserCreate(c *fiber.Ctx) error {
-	user := &models.User{
-		Name: c.FormValue("user"),
-	}
-	database.Connection.Create(&user)
-	return c.JSON(fiber.Map{
-		"success": true,
-		"user":    user,
-	})
-}
-
-// NotFound returns custom 404 page
 func NotFound(c *fiber.Ctx) error {
-	return c.JSON(fiber.Map{
-		"error": "object not found",
-	})
+	return c.Status(fiber.StatusNotFound).
+		JSON(fiber.Map{
+			"Error": "object not found",
+		})
+}
+
+func BadRequest(c *fiber.Ctx) error {
+	return c.Status(fiber.StatusBadRequest).
+		JSON(fiber.Map{
+			"Error": "malformed request",
+		})
+}
+
+func Unauthorized(c *fiber.Ctx) error {
+	return c.Status(fiber.StatusUnauthorized).
+		JSON(fiber.Map{
+			"Error": "unauthorized",
+		})
+}
+
+func ValidationError(c *fiber.Ctx, err []string) error {
+	return c.Status(fiber.StatusBadRequest).
+		JSON(fiber.Map{
+			"error":      "validation error",
+			"validation": err,
+		})
 }

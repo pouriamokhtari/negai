@@ -3,6 +3,10 @@ package main
 import (
 	"negai/database"
 	"negai/handlers"
+	"negai/helpers"
+	"negai/models"
+	"negai/routes"
+	"os"
 
 	"flag"
 	"log"
@@ -22,24 +26,29 @@ func main() {
 	flag.Parse()
 
 	// Connected with database
-	database.Connect()
-	database.AutoMigrateModels()
+	database.Connect(os.Getenv("DATABASE_CONNECTION"))
+	// migrate models
+	models.AutoMigrateModels()
 
 	// Create fiber app
 	app := fiber.New(fiber.Config{
-		Prefork: *prod, // go run app.go -prod
+		Prefork:      *prod, // go run app.go -prod
+		ErrorHandler: handlers.InternalServerError,
 	})
 
 	// Middleware
 	app.Use(recover.New())
 	app.Use(logger.New())
 
+	// Create JWT middleware (used later with route groups)
+	helpers.CreateJWTMiddleware()
+
 	// Create a /api/v1 endpoint
 	v1 := app.Group("/api/v1")
 
-	// Bind handlers
-	v1.Get("/users", handlers.UserList)
-	v1.Post("/users", handlers.UserCreate)
+	// Bind routes
+	routes.BindUser(v1.Group("/user"))
+	routes.BindAuth(v1.Group("/auth"))
 
 	// Handle not founds
 	app.Use(handlers.NotFound)
