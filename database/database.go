@@ -1,8 +1,6 @@
 package database
 
 import (
-	"negai/models"
-
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -18,9 +16,4 @@ func Connect(connectionString string) {
 	if err != nil {
 		panic("Couldn't connect to the database")
 	}
-}
-
-func AutoMigrateModels() {
-	Connection.AutoMigrate(&models.User{})
-	Connection.AutoMigrate(&models.List{})
 }

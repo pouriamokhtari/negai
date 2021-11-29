@@ -4,6 +4,7 @@ import (
 	"negai/database"
 	"negai/handlers"
 	"negai/helpers"
+	"negai/models"
 	"negai/routes"
 	"os"
 
@@ -26,12 +27,13 @@ func main() {
 
 	// Connected with database
 	database.Connect(os.Getenv("DATABASE_CONNECTION"))
-	database.AutoMigrateModels()
+	// migrate models
+	models.AutoMigrateModels()
 
 	// Create fiber app
 	app := fiber.New(fiber.Config{
 		Prefork:      *prod, // go run app.go -prod
-		ErrorHandler: handlers.ErrorHandler,
+		ErrorHandler: handlers.InternalServerError,
 	})
 
 	// Middleware

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"negai/database"
 	"negai/helpers"
 	"negai/models"
 
@@ -23,18 +22,21 @@ type UpdateUserParams struct {
 }
 
 func GetUser(c *fiber.Ctx) error {
-	var user models.User
+	user := &models.User{}
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return NotFound(c)
 	}
-	database.Connection.First(&user, id)
+	user.Find(uint(id))
 	return c.JSON(user)
 }
 
 func GetAllUsers(c *fiber.Ctx) error {
-	var users []models.User
-	database.Connection.Find(&users)
+	users, err := models.GetAllUsers()
+
+	if err != nil {
+		InternalServerError(c, err)
+	}
 	return c.JSON(users)
 }
 
@@ -51,7 +53,7 @@ func CreateUser(c *fiber.Ctx) error {
 
 	passwordDigest, err := helpers.HashPassword(params.Password)
 	if err != nil {
-		return InternalServerError(c)
+		return InternalServerError(c, err)
 	}
 
 	user := &models.User{
@@ -61,7 +63,9 @@ func CreateUser(c *fiber.Ctx) error {
 		PasswordDigest: passwordDigest,
 	}
 
-	database.Connection.Create(user)
+	if err := user.Create(); err != nil {
+		return InternalServerError(c, err)
+	}
 	return c.JSON(user)
 }
 
@@ -80,33 +84,37 @@ func UpdateUser(c *fiber.Ctx) error {
 		return ValidationError(c, err)
 	}
 
-	var user models.User
-	database.Connection.First(&user, id)
-
-	user = models.User{
-		Email:    params.Email,
-		FullName: params.FullName,
-		Role:     models.RoleFromString(params.Role),
-	}
+	user := &models.User{}
+	user.Find(uint(id))
 
 	user.PasswordDigest, err = helpers.HashPassword(params.Password)
 	if err != nil {
-		return InternalServerError(c)
+		return InternalServerError(c, err)
 	}
 
-	database.Connection.Updates(user)
+	err = user.Update(models.User{
+		Email:    params.Email,
+		FullName: params.FullName,
+		Role:     models.RoleFromString(params.Role),
+	})
+	if err != nil {
+		return InternalServerError(c, err)
+	}
+
 	return c.JSON(user)
 }
 
 func DeleteUser(c *fiber.Ctx) error {
-	var user models.User
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return NotFound(c)
 	}
 
-	database.Connection.First(&user, id)
-	database.Connection.Delete(&user)
+	user := &models.User{}
+	user.Find(uint(id))
+	if err := user.Delete(); err != nil {
+		return InternalServerError(c, err)
+	}
 	return c.JSON(fiber.Map{
 		"status": "OK",
 	})

@@ -35,7 +35,7 @@ func Register(c *fiber.Ctx) error {
 
 	passwordDigest, err := helpers.HashPassword(params.Password)
 	if err != nil {
-		return InternalServerError(c)
+		return InternalServerError(c, err)
 	}
 
 	user := &models.User{

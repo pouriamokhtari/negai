@@ -6,9 +6,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func ErrorHandler(c *fiber.Ctx, err error) error {
+func InternalServerError(c *fiber.Ctx, err error) error {
 	log.Println(err)
-	return InternalServerError(c)
+	return c.Status(fiber.StatusInternalServerError).
+		JSON(fiber.Map{
+			"Error": "internal server error",
+		})
 }
 
 func NotFound(c *fiber.Ctx) error {
@@ -29,13 +32,6 @@ func Unauthorized(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusUnauthorized).
 		JSON(fiber.Map{
 			"Error": "unauthorized",
-		})
-}
-
-func InternalServerError(c *fiber.Ctx) error {
-	return c.Status(fiber.StatusInternalServerError).
-		JSON(fiber.Map{
-			"Error": "internal server error",
 		})
 }
 
