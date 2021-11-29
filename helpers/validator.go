@@ -1,6 +1,8 @@
 package helpers
 
 import (
+	"strings"
+
 	validator "github.com/go-playground/validator/v10"
 )
 
@@ -10,7 +12,8 @@ func ValidateStruct(s interface{}) []string {
 	err := validate.Struct(s)
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
-			errors = append(errors, err.Field())
+			message := strings.Join([]string{err.Field(), err.ActualTag()}, ".")
+			errors = append(errors, message)
 		}
 	}
 	return errors
