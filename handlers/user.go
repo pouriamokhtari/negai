@@ -51,16 +51,11 @@ func CreateUser(c *fiber.Ctx) error {
 		return ValidationError(c, err)
 	}
 
-	passwordDigest, err := helpers.HashPassword(params.Password)
-	if err != nil {
-		return InternalServerError(c, err)
-	}
-
 	user := &models.User{
-		Email:          params.Email,
-		FullName:       params.FullName,
-		Role:           models.RoleFromString(params.Role),
-		PasswordDigest: passwordDigest,
+		Email:    params.Email,
+		FullName: params.FullName,
+		Role:     models.RoleFromString(params.Role),
+		Password: params.Password,
 	}
 
 	if err := user.Create(); err != nil {
@@ -87,15 +82,11 @@ func UpdateUser(c *fiber.Ctx) error {
 	user := &models.User{}
 	user.Find(uint(id))
 
-	user.PasswordDigest, err = helpers.HashPassword(params.Password)
-	if err != nil {
-		return InternalServerError(c, err)
-	}
-
 	err = user.Update(models.User{
 		Email:    params.Email,
 		FullName: params.FullName,
 		Role:     models.RoleFromString(params.Role),
+		Password: params.Password,
 	})
 	if err != nil {
 		return InternalServerError(c, err)
