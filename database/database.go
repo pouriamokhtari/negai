@@ -22,4 +22,5 @@ func Connect(connectionString string) {
 
 func AutoMigrateModels() {
 	Connection.AutoMigrate(&models.User{})
+	Connection.AutoMigrate(&models.List{})
 }
