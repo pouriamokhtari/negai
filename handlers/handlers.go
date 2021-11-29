@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"log"
 	"negai/helpers"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func ErrorHandler(c *fiber.Ctx, err error) error {
+	log.Println(err)
 	return InternalServerError(c)
 }
 
