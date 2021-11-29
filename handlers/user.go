@@ -57,7 +57,7 @@ func CreateUser(c *fiber.Ctx) error {
 	user := &models.User{
 		Email:          params.Email,
 		FullName:       params.FullName,
-		Role:           models.NewRoleFromString(params.Role),
+		Role:           models.RoleFromString(params.Role),
 		PasswordDigest: passwordDigest,
 	}
 
@@ -86,7 +86,7 @@ func UpdateUser(c *fiber.Ctx) error {
 	user = models.User{
 		Email:    params.Email,
 		FullName: params.FullName,
-		Role:     models.NewRoleFromString(params.Role),
+		Role:     models.RoleFromString(params.Role),
 	}
 
 	user.PasswordDigest, err = helpers.HashPassword(params.Password)

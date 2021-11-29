@@ -11,12 +11,12 @@ const (
 type User struct {
 	gorm.Model
 	FullName       string
-	Role           byte   `gorm:"not null;default=0"`
+	Role           int    `gorm:"not null;default=0"`
 	Email          string `gorm:"unique;not null;uniqueIndex"`
 	PasswordDigest string `json:"-" gorm:"not null"` // don't include when marshaling
 }
 
-func NewRoleFromString(role string) byte {
+func RoleFromString(role string) int {
 	switch role {
 	case "admin", "Admin", "ADMIN":
 		return Admin
