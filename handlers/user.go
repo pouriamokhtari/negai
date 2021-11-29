@@ -11,15 +11,15 @@ import (
 type NewUserParams struct {
 	Email    string `validate:"required,email"`
 	FullName string `validate:"required"`
-	Role     string `validate:"oneof=admin member,omitempty"`
+	Role     string `validate:"oneof=admin member|eq="`
 	Password string `validate:"required,min=8"`
 }
 
 type UpdateUserParams struct {
-	Email    string `validate:"email,omitempty"`
-	FullName string `validate:"omitempty"`
-	Role     string `validate:"oneof=admin member,omitempty"`
-	Password string `validate:"min=8,omitempty"`
+	Email    string `validate:"email|eq="`
+	FullName string
+	Role     string `validate:"oneof=admin member|eq="`
+	Password string `validate:"min=8|eq="`
 }
 
 func GetUser(c *fiber.Ctx) error {
