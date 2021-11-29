@@ -13,6 +13,7 @@ import (
 
 type RegisterParams struct {
 	Email    string `validate:"required,email"`
+	FullName string `validate:"required"`
 	Password string `validate:"required,min=8"`
 }
 
@@ -39,6 +40,8 @@ func Register(c *fiber.Ctx) error {
 
 	user := &models.User{
 		Email:          params.Email,
+		Role:           models.Member,
+		FullName:       params.FullName,
 		PasswordDigest: passwordDigest,
 	}
 	result := database.Connection.Create(&user)
@@ -74,6 +77,7 @@ func Login(c *fiber.Ctx) error {
 
 	claims := jwt.MapClaims{
 		"Email": user.Email,
+		"Role":  user.Role,
 		"exp":   time.Now().Add(time.Hour * 72).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

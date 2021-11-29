@@ -10,11 +10,15 @@ import (
 
 type NewUserParams struct {
 	Email    string `validate:"required,email"`
+	FullName string `validate:"required"`
+	Role     string `validate:"oneof=admin member"`
 	Password string `validate:"required,min=8"`
 }
 
 type UpdateUserParams struct {
 	Email    string `validate:"email"`
+	FullName string
+	Role     string `validate:"oneof=admin member"`
 	Password string `validate:"min=8"`
 }
 
@@ -50,8 +54,10 @@ func CreateUser(c *fiber.Ctx) error {
 		return InternalServerError(c)
 	}
 
-	user := models.User{
+	user := &models.User{
 		Email:          params.Email,
+		FullName:       params.FullName,
+		Role:           models.NewRoleFromString(params.Role),
 		PasswordDigest: passwordDigest,
 	}
 
@@ -77,7 +83,12 @@ func UpdateUser(c *fiber.Ctx) error {
 	var user models.User
 	database.Connection.First(&user, id)
 
-	user.Email = params.Email
+	user = models.User{
+		Email:    params.Email,
+		FullName: params.FullName,
+		Role:     models.NewRoleFromString(params.Role),
+	}
+
 	user.PasswordDigest, err = helpers.HashPassword(params.Password)
 	if err != nil {
 		return InternalServerError(c)
