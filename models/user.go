@@ -2,22 +2,24 @@ package models
 
 import (
 	"negai/database"
+	"negai/helpers"
 
 	"gorm.io/gorm"
 )
 
 const (
-	Member = 0
-	Admin  = 1
+	Member = "member"
+	Admin  = "admin"
 )
 
 // User model
 type User struct {
 	gorm.Model
 	FullName       string
-	Role           uint   `gorm:"not null;default=0"`
+	Role           string `gorm:"not null;default=0"`
 	Email          string `gorm:"unique;not null;uniqueIndex"`
 	PasswordDigest string `json:"-" gorm:"not null"` // don't include when marshaling
+	Password       string `json:"-" gorm:"-"`
 }
 
 func GetAllUsers() ([]User, error) {
@@ -27,29 +29,25 @@ func GetAllUsers() ([]User, error) {
 }
 
 func (u *User) Find(id uint) error {
-	result := database.Connection.First(u, id)
-	return result.Error
+	return database.Connection.First(u, id).Error
 }
 
 func (u *User) Create() error {
-	result := database.Connection.Create(u)
-	return result.Error
+	if len(u.Password) != 0 {
+		passwordDigest, err := helpers.HashPassword(u.Password)
+		if err != nil {
+			return err
+		}
+		u.PasswordDigest = passwordDigest
+	}
+	return database.Connection.Create(u).Error
 }
 
 func (u *User) Update(newUser User) error {
-	result := database.Connection.Model(&u).Updates(newUser)
-	return result.Error
+	return database.Connection.Model(&u).Updates(newUser).Error
+
 }
 
 func (u *User) Delete() error {
-	result := database.Connection.Delete(u)
-	return result.Error
-}
-
-func RoleFromString(role string) uint {
-	switch role {
-	case "admin", "Admin", "ADMIN":
-		return Admin
-	}
-	return Member
+	return database.Connection.Delete(u).Error
 }

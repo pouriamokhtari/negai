@@ -27,7 +27,12 @@ func GetUser(c *fiber.Ctx) error {
 	if err != nil {
 		return NotFound(c)
 	}
-	user.Find(uint(id))
+
+	err = user.Find(uint(id))
+	if err != nil {
+		return NotFound(c)
+	}
+
 	return c.JSON(user)
 }
 
@@ -51,16 +56,11 @@ func CreateUser(c *fiber.Ctx) error {
 		return ValidationError(c, err)
 	}
 
-	passwordDigest, err := helpers.HashPassword(params.Password)
-	if err != nil {
-		return InternalServerError(c, err)
-	}
-
 	user := &models.User{
-		Email:          params.Email,
-		FullName:       params.FullName,
-		Role:           models.RoleFromString(params.Role),
-		PasswordDigest: passwordDigest,
+		Email:    params.Email,
+		FullName: params.FullName,
+		Role:     params.Role,
+		Password: params.Password,
 	}
 
 	if err := user.Create(); err != nil {
@@ -85,17 +85,16 @@ func UpdateUser(c *fiber.Ctx) error {
 	}
 
 	user := &models.User{}
-	user.Find(uint(id))
-
-	user.PasswordDigest, err = helpers.HashPassword(params.Password)
+	err = user.Find(uint(id))
 	if err != nil {
-		return InternalServerError(c, err)
+		return NotFound(c)
 	}
 
 	err = user.Update(models.User{
 		Email:    params.Email,
 		FullName: params.FullName,
-		Role:     models.RoleFromString(params.Role),
+		Role:     params.Role,
+		Password: params.Password,
 	})
 	if err != nil {
 		return InternalServerError(c, err)
@@ -111,7 +110,10 @@ func DeleteUser(c *fiber.Ctx) error {
 	}
 
 	user := &models.User{}
-	user.Find(uint(id))
+	err = user.Find(uint(id))
+	if err != nil {
+		return NotFound(c)
+	}
 	if err := user.Delete(); err != nil {
 		return InternalServerError(c, err)
 	}
