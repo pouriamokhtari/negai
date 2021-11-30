@@ -9,8 +9,9 @@ import (
 
 var JWTMiddleware func(*fiber.Ctx) error
 
-func NewJWTMiddleware() {
+func NewJWTMiddleware(handler func(*fiber.Ctx, error) error) {
 	JWTMiddleware = jwt.New(jwt.Config{
-		SigningKey: []byte(os.Getenv("JWT_SECRET")),
+		SigningKey:   []byte(os.Getenv("JWT_SECRET")),
+		ErrorHandler: handler,
 	})
 }

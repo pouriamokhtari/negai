@@ -35,10 +35,17 @@ func Unauthorized(c *fiber.Ctx) error {
 		})
 }
 
+func InvalidJWT(c *fiber.Ctx, err error) error {
+	return c.Status(fiber.StatusUnauthorized).
+		JSON(fiber.Map{
+			"Error": "missing or malformed jwt",
+		})
+}
+
 func ValidationError(c *fiber.Ctx, err []string) error {
 	return c.Status(fiber.StatusBadRequest).
 		JSON(fiber.Map{
-			"error":      "validation error",
-			"validation": err,
+			"Error":      "validation error",
+			"Validation": err,
 		})
 }
