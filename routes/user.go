@@ -11,7 +11,7 @@ import (
 func BindUser(r fiber.Router) {
 	// JWT Middleware
 	r.Use(helpers.JWTMiddleware)
-	r.Use(helpers.CreateRoleMiddleware(models.Admin))
+	r.Use(helpers.NewRoleMiddleware(models.Admin))
 	r.Get("/", handlers.GetAllUsers)
 	r.Get("/:id", handlers.GetUser)
 	r.Post("/", handlers.CreateUser)

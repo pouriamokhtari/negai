@@ -9,7 +9,7 @@ import (
 
 var JWTMiddleware func(*fiber.Ctx) error
 
-func CreateJWTMiddleware() {
+func NewJWTMiddleware() {
 	JWTMiddleware = jwt.New(jwt.Config{
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 	})

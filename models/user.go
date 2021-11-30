@@ -8,15 +8,15 @@ import (
 )
 
 const (
-	Member = 0
-	Admin  = 1
+	Member = "member"
+	Admin  = "admin"
 )
 
 // User model
 type User struct {
 	gorm.Model
 	FullName       string
-	Role           uint   `gorm:"not null;default=0"`
+	Role           string `gorm:"not null;default=0"`
 	Email          string `gorm:"unique;not null;uniqueIndex"`
 	PasswordDigest string `json:"-" gorm:"not null"` // don't include when marshaling
 	Password       string `json:"-" gorm:"-"`
@@ -50,12 +50,4 @@ func (u *User) Update(newUser User) error {
 
 func (u *User) Delete() error {
 	return database.Connection.Delete(u).Error
-}
-
-func RoleFromString(role string) uint {
-	switch role {
-	case "admin", "Admin", "ADMIN":
-		return Admin
-	}
-	return Member
 }

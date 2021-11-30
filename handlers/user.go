@@ -59,7 +59,7 @@ func CreateUser(c *fiber.Ctx) error {
 	user := &models.User{
 		Email:    params.Email,
 		FullName: params.FullName,
-		Role:     models.RoleFromString(params.Role),
+		Role:     params.Role,
 		Password: params.Password,
 	}
 
@@ -93,7 +93,7 @@ func UpdateUser(c *fiber.Ctx) error {
 	err = user.Update(models.User{
 		Email:    params.Email,
 		FullName: params.FullName,
-		Role:     models.RoleFromString(params.Role),
+		Role:     params.Role,
 		Password: params.Password,
 	})
 	if err != nil {
