@@ -27,7 +27,12 @@ func GetUser(c *fiber.Ctx) error {
 	if err != nil {
 		return NotFound(c)
 	}
-	user.Find(uint(id))
+
+	err = user.Find(uint(id))
+	if err != nil {
+		return NotFound(c)
+	}
+
 	return c.JSON(user)
 }
 
@@ -80,7 +85,10 @@ func UpdateUser(c *fiber.Ctx) error {
 	}
 
 	user := &models.User{}
-	user.Find(uint(id))
+	err = user.Find(uint(id))
+	if err != nil {
+		return NotFound(c)
+	}
 
 	err = user.Update(models.User{
 		Email:    params.Email,
@@ -102,7 +110,10 @@ func DeleteUser(c *fiber.Ctx) error {
 	}
 
 	user := &models.User{}
-	user.Find(uint(id))
+	err = user.Find(uint(id))
+	if err != nil {
+		return NotFound(c)
+	}
 	if err := user.Delete(); err != nil {
 		return InternalServerError(c, err)
 	}
