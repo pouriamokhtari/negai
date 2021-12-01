@@ -6,14 +6,15 @@ import (
 	"negai/middlewares"
 	"negai/models"
 	"negai/routes"
-	"os"
 
 	"flag"
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	jwt "github.com/gofiber/jwt/v3"
 )
 
 var (
