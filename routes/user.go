@@ -2,16 +2,21 @@ package routes
 
 import (
 	"negai/handlers"
-	"negai/helpers"
+	"negai/middlewares"
 	"negai/models"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func BindUser(r fiber.Router) {
-	// JWT Middleware
-	r.Use(helpers.JWTMiddleware)
-	r.Use(helpers.NewRoleMiddleware(models.Admin))
+	// JWT middleware
+	r.Use(middlewares.JWTMiddleware)
+	// Role middleware
+	r.Use(middlewares.NewRoleMiddleware(
+		middlewares.RoleMiddlewareConfig{
+			Role:    models.Admin,
+			Handler: handlers.Unauthorized,
+		}))
 	r.Get("/", handlers.GetAllUsers)
 	r.Get("/:id", handlers.GetUser)
 	r.Post("/", handlers.CreateUser)
