@@ -3,17 +3,18 @@ package main
 import (
 	"negai/database"
 	"negai/handlers"
-	"negai/helpers"
+	"negai/middlewares"
 	"negai/models"
 	"negai/routes"
-	"os"
 
 	"flag"
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	jwt "github.com/gofiber/jwt/v3"
 )
 
 var (
@@ -41,7 +42,10 @@ func main() {
 	app.Use(logger.New())
 
 	// Create JWT middleware (used later with route groups)
-	helpers.NewJWTMiddleware(handlers.InvalidJWT)
+	middlewares.NewJWTMiddleware(jwt.Config{
+		SigningKey:   []byte(os.Getenv("JWT_SECRET")),
+		ErrorHandler: handlers.InvalidJWT,
+	})
 
 	// Create a /api/v1 endpoint
 	v1 := app.Group("/api/v1")

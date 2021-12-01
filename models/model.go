@@ -3,10 +3,10 @@ package models
 import "negai/database"
 
 type Model interface {
-	Find()
-	Create()
-	Delete()
-	Update(*Model)
+	Find(id uint) error
+	Create() error
+	Delete() error
+	Update(Model) error
 }
 
 func AutoMigrateModels() {
